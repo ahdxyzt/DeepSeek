@@ -38,7 +38,7 @@ const bushufangshi=document.getElementById('bushufangshi').value;
 hardwareRecommendationHTML += `<div class="result-item">  <strong>- 英伟达卡: </strong>${calculationResults.navidaka}</div>`;
             hardwareRecommendationHTML += '<div class="result-item"><strong>推荐设备型号:</strong></div>';
             hardwareRecommendationHTML += `<div class="result-item">  ${calculationResults.deviceoncloud} </div>`;
-hardwareRecommendationHTML += `<div class="result-item"></div>`;
+hardwareRecommendationHTML += `<div class="result-item">以上用于体验版配置，适用于体验模型部署过程、测试模型功能场景。后续推出性价比、高性能等不同配置方案。</div>`;
         }
 
 
