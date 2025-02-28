@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('calculate-button').addEventListener('click', function() {
     // 获取用户输入的参数
     const modelType = document.getElementById('concurrency').value;
-    const precision = document.getElementById('precision').value;
+    const precision = 0;
     const concurrency = parseInt(document.getElementById('concurrency').value);
 
     const framework =0;
