@@ -22,10 +22,11 @@ document.getElementById('calculate-button').addEventListener('click', function()
     const loraTrainableParams =  0;
     const hardware = 0;
 const contextLength=0;
+const bushufangshi=document.getElementById('bushufangshi').value;
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '<h2>算力部署建议（最低配置）:</h2>';
     // 调用计算函数并显示结果
-    const calculationResults = calculateRequirements(modelType, precision, concurrency, contextLength, framework, fineTuningMethod, loraTrainableParams, hardware);
+    const calculationResults = calculateRequirements(modelType, precision, concurrency,bushufangshi, contextLength, framework, fineTuningMethod, loraTrainableParams, hardware);
 
     if (calculationResults) {
         let hardwareRecommendationHTML = '';
@@ -36,8 +37,8 @@ const contextLength=0;
             hardwareRecommendationHTML += `<div class="result-item">  <strong>- 国产算力卡: </strong>${calculationResults.guochanka} </div>`;
 hardwareRecommendationHTML += `<div class="result-item">  <strong>- 英伟达卡: </strong>${calculationResults.navidaka}</div>`;
             hardwareRecommendationHTML += '<div class="result-item"><strong>推荐设备型号:</strong></div>';
-            hardwareRecommendationHTML += `<div class="result-item">  <strong>1. </strong>${calculationResults.deviceoncloud} </div>`;
-hardwareRecommendationHTML += `<div class="result-item"> <strong> 2. </strong>${calculationResults.devicelocal} </div>`;
+            hardwareRecommendationHTML += `<div class="result-item">  ${calculationResults.deviceoncloud} </div>`;
+hardwareRecommendationHTML += `<div class="result-item"></div>`;
         }
 
 
@@ -73,7 +74,7 @@ hardwareRecommendationHTML += `<div class="result-item"> <strong> 2. </strong>
 
 
 //计算资源需求
-function calculateRequirements(modelType, precision, concurrency, contextLength, framework, fineTuningMethod = 'inference', loraTrainableParamsBillion = 0, hardware) {
+function calculateRequirements(modelType, precision, concurrency, bushufangshi,contextLength, framework, fineTuningMethod = 'inference', loraTrainableParamsBillion = 0, hardware) {
     let estimatedMemoryGB = 0;
     let computeLoad = "中等";
     let recommendation = "请根据实际情况调整参数和框架选择。";
@@ -89,6 +90,7 @@ let modelmoney=0;
     let navidaka=0;
     let deviceoncloud=0;
     let devicelocal=0;
+    let deviceoncloud2=0;
     // **直接使用常量定义模型大小 (GB) - 来自用户提供的数据**
     const modelSizesGB = {
         'int42': { cpu:"64核以上，服务器集群",mem:"512GB+",yinpan:"300GB+，模型文件约400-500GB",xianka:"多节点分布式训练，80GB+显存"},
@@ -99,20 +101,20 @@ let modelmoney=0;
 'fp16': { cpu:"最低4核，推荐Intel/AMD多核处理器",mem:"8GB+",yinpan:"3GB+存储空间，模型文件约1.5-2GB",xianka:"非必需，若GPU加速可选4GB+显存"}
     };
 const hardwareRecommendation = {
-        'int42': { guochan:"Ascend 910B 64G，16卡",navida:"H100/H800/H20 80G，8卡"},
-      'int41': { guochan:"Ascend 910B 64G，8卡",navida:"H100/H800/H20 80G，8卡或A10，4卡"},
-'int4': { guochan:"Ascend 910B 64G，4卡",navida:"H100/H800/H20 80G，4卡或A10，2卡"},
-'int8': { guochan:"Atlas 300I Duo",navida:"A10"},
-'fp8': { guochan:"Atlas 300I Duo",navida:"4090 24GB"},
-'fp16': { guochan:"Atlas 300V",navida:"4090 24GB"}
+        'int42': { guochan:"Ascend 910B 64G，16卡",navida:"A100 40GB，6卡"},
+      'int41': { guochan:"Ascend 910B 64G，8卡",navida:"A10 24G，4卡"},
+'int4': { guochan:"Atlas 300I Duo，4卡",navida:"A10 24G，4卡"},
+'int8': { guochan:"Atlas 300I Duo，2卡",navida:"A10 24G，2卡"},
+'fp8': { guochan:"Atlas 300I Duo，1卡",navida:"A10 24G，1卡"},
+'fp16': { guochan:"Atlas 300V，1卡",navida:"A10 24G，1卡"}
     };
 const hardwareRecommendation2 = {
-        'int42': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2，2台"},
-      'int41': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2"},
-'int4': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2"},
-'int8': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300I Duo"},
-'fp8': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300I Duo"},
-'fp16': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300V"}
+        'int42': { 'a':"裸金属：ebm.g7e6.28xlarge1024   2*28核56线程CPU，1024GB内存，系统盘2*480GB SSD，数据盘2*3.2TB NVME SSD，支持RDMA网络",'b':"裸金属：ebm.g7e6.28xlarge1024   2*28核56线程CPU，1024GB内存，系统盘2*480GB SSD，数据盘2*3.2TB NVME SSD，支持RDMA网络",'c':"天翼云推理一体机：AT800 (Model 9000) A2*2台;CE9860 32*400GE 参数面交换机*1台"},
+      'int41': { 'a':"GPU云主机：g6i4.8xlarge.2  32核64G",'b':"GPU云主机：g6i4.8xlarge.2  32核64G",'c':"Atlas 800I A2*1台"},
+'int4': { 'a':"GPU云主机：g6i4.8xlarge.2  32核64G",'b':"GPU云主机：g6i4.8xlarge.2  32核64G",'c':"星辰大模型一体机DeepSeek星海智文四卡版"},
+'int8': { 'a':"GPU云主机：g6i2.4xlarge.2  16核32G",'b':"GPU云主机：g6i2.4xlarge.2  16核32G",'c':"星辰大模型一体机Deepseek星海智文二卡版"},
+'fp8': { 'a':"GPU云主机：g6i.2xlarge.2  8核16G",'b':"GPU云主机：g6i.2xlarge.2  8核16G",'c':"Atlas 300I Duo"},
+'fp16': { 'a':"GPU云主机：g6i.xlarge.2   4核8G",'b':"GPU云主机：g6i.xlarge.2   4核8G",'c':"Atlas 300V"}
     };
 const modeltype = {
         'int42': { name:"DeepSeek-R1-671B",money:"100万以上"},
@@ -192,8 +194,8 @@ modelmoney=modeltype[modelType].money;
     estimatedMemoryGB = other_memory_gb;
     guochanka=hardwareRecommendation[modelType].guochan;
     navidaka=hardwareRecommendation[modelType].navida;
-    deviceoncloud=hardwareRecommendation2[modelType].cloud;
-    devicelocal=hardwareRecommendation2[modelType].fuwuqi;
+    deviceoncloud=hardwareRecommendation2[modelType][bushufangshi];
+    devicelocal=hardwareRecommendation2[modelType][bushufangshi];
     const hardwareMemoryGB = {
         'nvidia_a10': 24,
         'nvidia_a100_80g': 80,
