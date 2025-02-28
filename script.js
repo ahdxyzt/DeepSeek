@@ -45,11 +45,11 @@ hardwareRecommendationHTML += `<div class="result-item"></div>`;
         resultsDiv.innerHTML += `
             <div class="result-item"><strong>推荐模型规模:</strong>${calculationResults.modeltypename}</div>
 <hr>
-         <div class="result-item"><strong>预估成本（仅供参考，详询支撑人员）:</strong>${calculationResults.modelmoney}</div>
+         <div class="result-item"><strong>预估成本（仅供参考，详询专业人员）:</strong>${calculationResults.modelmoney}</div>
             
             ${fineTuningMethod === 'lora' ? `<div class="result-item"><strong>LoRA 可训练参数:</strong> ${loraTrainableParams} Billion</div>` : ''}
             <hr>
-            <div class="result-item"><strong>最低服务器配置需求:</strong></div>
+            <div class="result-item"><strong>最低服务器配置:</strong></div>
             <div class="result-item">  <strong>- CPU: </strong>${calculationResults.model_weights_memory}</div>
             <div class="result-item"> <strong> - 内存: </strong>${calculationResults.kv_cache_memory}</div>
             <div class="result-item">  <strong>- 硬盘: </strong>${calculationResults.activation_memory}</div>
@@ -124,6 +124,14 @@ const modeltype = {
 'fp8': {name:"DeepSeek-R1-7B",money:"10万以下"},
 'fp16': { name:"DeepSeek-R1-1.5B",money:"10万以下"}
     };
+const modeltype2 = {
+        'int42': { 'a':"62948.8元/月",'b':"62948.8元/月",'c':"300万左右"},
+      'int41': {'a':"13264元/月",'b':"13264元/月",'c':"45万左右"},
+'int4': { 'a':"13264元/月",'b':"13264元/月",'c':"30~40万（市场指导价）"},
+'int8': {'a':"6632元/月",'b':"6632元/月",'c':"20~30万（市场指导价）"},
+'fp8': {'a':"3316元/月",'b':"3316元/月",'c':"14万左右"},
+'fp16': {'a':"3008元/月",'b':"3008元/月",'c':"10万以下"}
+    };
     // **模型架构细节 (来自用户提供的数据)**
     const modelArchParams = {
         'int42': { params: 671, layers: 61, hidden_dim: 7168, kv_heads: 128, head_dim: 128, kv_compress_dim: 512, moe: true },
@@ -152,7 +160,7 @@ const modeltype = {
     // 1. 模型权重内存 (直接从常量读取)
     model_weights_memory_gb = modelSizesGB[modelType].cpu;
     modeltypename=modeltype[modelType].name;
-modelmoney=modeltype[modelType].money;
+modelmoney=modeltype2[modelType][bushufangshi];
     // 2. KV Cache 内存 - 基于理论模型的计算
     let kvCacheSizeBytes = 0;
     if (model_config.moe) {
