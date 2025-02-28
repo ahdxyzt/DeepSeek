@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化选择器和事件监听器
     const fineTuningMethodSelect = document.getElementById('fine-tuning-method');
     const loraParamsSection = document.getElementById('lora-params-section');
-    const precisionSelect = document.getElementById('precision');
+    const precisionSelect =0;
     const hardwareSelect = document.getElementById('hardware');
     const allHardwareOptions = 0;
    
