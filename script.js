@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 计算按钮点击事件
 document.getElementById('calculate-button').addEventListener('click', function() {
     // 获取用户输入的参数
-    const modelType = document.getElementById('model-type').value;
+    const modelType = document.getElementById('concurrency').value;
     const precision = document.getElementById('precision').value;
     const concurrency = parseInt(document.getElementById('concurrency').value);
 
@@ -23,7 +23,7 @@ document.getElementById('calculate-button').addEventListener('click', function()
     const hardware = 0;
 const contextLength=0;
     const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '<h2>推荐方案:</h2>';
+    resultsDiv.innerHTML = '<h2>算力部署建议（最低配置）:</h2>';
     // 调用计算函数并显示结果
     const calculationResults = calculateRequirements(modelType, precision, concurrency, contextLength, framework, fineTuningMethod, loraTrainableParams, hardware);
 
@@ -33,37 +33,38 @@ const contextLength=0;
             hardwareRecommendationHTML += '<div class="result-item"><strong>推荐算力卡型号:</strong></div>';
             const hardwareName = Object.keys(calculationResults.hardware_recommendation)[0];
             const count = calculationResults.hardware_recommendation[hardwareName];
-            hardwareRecommendationHTML += `<div class="result-item">  - 国产算力卡: <strong>${calculationResults.guochanka} </strong></div>`;
-hardwareRecommendationHTML += `<div class="result-item">  - 英伟达卡: <strong>${calculationResults.navidaka} </strong></div>`;
+            hardwareRecommendationHTML += `<div class="result-item">  <strong>- 国产算力卡: </strong>${calculationResults.guochanka} </div>`;
+hardwareRecommendationHTML += `<div class="result-item">  <strong>- 英伟达卡: </strong>${calculationResults.navidaka}</div>`;
             hardwareRecommendationHTML += '<div class="result-item"><strong>推荐设备型号:</strong></div>';
-            hardwareRecommendationHTML += `<div class="result-item">  1. <strong>${calculationResults.deviceoncloud} </strong></div>`;
-hardwareRecommendationHTML += `<div class="result-item">  2. <strong>${calculationResults.devicelocal} </strong></div>`;
+            hardwareRecommendationHTML += `<div class="result-item">  <strong>1. </strong>${calculationResults.deviceoncloud} </div>`;
+hardwareRecommendationHTML += `<div class="result-item"> <strong> 2. </strong>${calculationResults.devicelocal} </div>`;
         }
 
 
         resultsDiv.innerHTML += `
-            <div class="result-item"><strong>推荐模型规模:</strong> ${getModelDisplayName(modelType)}</div>
-         
+            <div class="result-item"><strong>推荐模型规模:</strong>${calculationResults.modeltypename}</div>
+<hr>
+         <div class="result-item"><strong>预估成本:</strong>${calculationResults.modelmoney}</div>
             
             ${fineTuningMethod === 'lora' ? `<div class="result-item"><strong>LoRA 可训练参数:</strong> ${loraTrainableParams} Billion</div>` : ''}
             <hr>
             <div class="result-item"><strong>最低服务器配置需求:</strong></div>
-            <div class="result-item">  - CPU: <strong>${calculationResults.model_weights_memory}</strong></div>
-            <div class="result-item">  - 内存: <strong>${calculationResults.kv_cache_memory}</strong></div>
-            <div class="result-item">  - 硬盘: <strong>${calculationResults.activation_memory}</strong></div>
-            <div class="result-item">  - 显卡: <strong>${calculationResults.other_memory}</strong></div>
+            <div class="result-item">  <strong>- CPU: </strong>${calculationResults.model_weights_memory}</div>
+            <div class="result-item"> <strong> - 内存: </strong>${calculationResults.kv_cache_memory}</div>
+            <div class="result-item">  <strong>- 硬盘: </strong>${calculationResults.activation_memory}</div>
+            <div class="result-item">  <strong>- 显卡: </strong>${calculationResults.other_memory}</div>
             
             ${hardwareRecommendationHTML}
-            <div class="result-item"><strong>预估算力需求:</strong> ${calculationResults.compute}</div>
-          
+           
+          <hr>
             <div class="result-item"><strong>部署建议:</strong> ${calculationResults.deployment_recommendation}</div>
-            <div class="result-item"><strong>建议:</strong> ${calculationResults.recommendation}</div>
-            <p class="result-item" style="font-size: smaller; color: gray;">* 显存和算力均为估算值，实际情况可能因多种因素而异。</p>
-            <p class="result-item" style="font-size: smaller; color: gray;">* 推理显存估算公式：总内存 = 模型权重内存 + KV Cache 内存 + 激活内存 + 碎片化内存</p>
-            ${fineTuningMethod === 'lora' ? `<p class="result-item" style="font-size: smaller; color: gray;">* LoRA 微调会增加少量模型权重内存。</p>` : ''}
-            <p class="result-item" style="font-size: smaller; color: gray;">* 模型架构参数 (层数、隐藏维度等) 基于 DeepSeek 模型近似配置。</p>
-            <p class="result-item" style="font-size: smaller; color: gray;">* 算力卡数量为满足显存需求的**最少估算**，实际部署可能需要更多卡以满足性能需求。</p>
-            <p class="result-item" style="font-size: smaller; color: gray;">* 算力机台数假设 NVIDIA 和 华为昇腾 机器每台都包含 8 张算力卡。</p>
+            <div class="result-item"><strong> </strong>  </div>
+         <p class="result-item" style="font-size: smaller; color: gray;"> </p>
+           <p class="result-item" style="font-size: smaller; color: gray;"> </p>
+           
+           
+           <p class="result-item" style="font-size: smaller; color: gray;"> </p>
+           <p class="result-item" style="font-size: smaller; color: gray;"> </p>  
         `;
     } else {
         resultsDiv.innerHTML += '<p>无法估算，请检查输入参数。</p>';
@@ -77,6 +78,8 @@ function calculateRequirements(modelType, precision, concurrency, contextLength,
     let computeLoad = "中等";
     let recommendation = "请根据实际情况调整参数和框架选择。";
     let model_weights_memory_gb = 0;
+    let modeltypename=0;
+let modelmoney=0;
     let kv_cache_memory_gb = 0;
     let activation_memory_gb = 0;
     let other_memory_gb = 0;
@@ -88,38 +91,45 @@ function calculateRequirements(modelType, precision, concurrency, contextLength,
     let devicelocal=0;
     // **直接使用常量定义模型大小 (GB) - 来自用户提供的数据**
     const modelSizesGB = {
-        'r1_671b': { cpu:"64核以上，服务器集群",mem:"512GB+",yinpan:"300GB+，模型文件约400-500GB",xianka:"多节点分布式训练，80GB+显存"},
-      'r1_70b': { cpu:"32核以上，服务器级CPU",mem:"128GB+",yinpan:"70GB+，模型文件约43-45GB",xianka:"多卡并行，64GB+显存"},
-'r1_32b': { cpu:"16核以上，如AMD Ryzen 9或Intel i9",mem:"64GB+",yinpan:"30GB+，模型文件约20-22GB",xianka:"24GB+显存"},
-'r1_14b': { cpu:"12核以上",mem:"32GB+",yinpan:"15GB+，模型文件约9-10GB",xianka:"16GB+显存"},
-'r1_7b': { cpu:"8核以上，推荐现代多核CPU",mem:"16GB+",yinpan:"8GB+，模型文件约4-5GB",xianka:"推荐8GB+显存"},
-'r1_1.5b': { cpu:"最低4核，推荐Intel/AMD多核处理器",mem:"8GB+",yinpan:"3GB+存储空间，模型文件约1.5-2GB",xianka:"非必需，若GPU加速可选4GB+显存"}
+        'int42': { cpu:"64核以上，服务器集群",mem:"512GB+",yinpan:"300GB+，模型文件约400-500GB",xianka:"多节点分布式训练，80GB+显存"},
+      'int41': { cpu:"32核以上，服务器级CPU",mem:"128GB+",yinpan:"70GB+，模型文件约43-45GB",xianka:"多卡并行，64GB+显存"},
+'int4': { cpu:"16核以上，如AMD Ryzen 9或Intel i9",mem:"64GB+",yinpan:"30GB+，模型文件约20-22GB",xianka:"24GB+显存"},
+'int8': { cpu:"12核以上",mem:"32GB+",yinpan:"15GB+，模型文件约9-10GB",xianka:"16GB+显存"},
+'fp8': { cpu:"8核以上，推荐现代多核CPU",mem:"16GB+",yinpan:"8GB+，模型文件约4-5GB",xianka:"推荐8GB+显存"},
+'fp16': { cpu:"最低4核，推荐Intel/AMD多核处理器",mem:"8GB+",yinpan:"3GB+存储空间，模型文件约1.5-2GB",xianka:"非必需，若GPU加速可选4GB+显存"}
     };
 const hardwareRecommendation = {
-        'r1_671b': { guochan:"Ascend 910B 64G，16卡",navida:"H100/H800/H20 80G，8卡"},
-      'r1_70b': { guochan:"Ascend 910B 64G，8卡",navida:"H100/H800/H20 80G，8卡或A10，4卡"},
-'r1_32b': { guochan:"Ascend 910B 64G，4卡",navida:"H100/H800/H20 80G，4卡或A10，2卡"},
-'r1_14b': { guochan:"Atlas 300I Duo",navida:"A10"},
-'r1_7b': { guochan:"Atlas 300I Duo",navida:"4090 24GB"},
-'r1_1.5b': { guochan:"Atlas 300V",navida:"4090 24GB"}
+        'int42': { guochan:"Ascend 910B 64G，16卡",navida:"H100/H800/H20 80G，8卡"},
+      'int41': { guochan:"Ascend 910B 64G，8卡",navida:"H100/H800/H20 80G，8卡或A10，4卡"},
+'int4': { guochan:"Ascend 910B 64G，4卡",navida:"H100/H800/H20 80G，4卡或A10，2卡"},
+'int8': { guochan:"Atlas 300I Duo",navida:"A10"},
+'fp8': { guochan:"Atlas 300I Duo",navida:"4090 24GB"},
+'fp16': { guochan:"Atlas 300V",navida:"4090 24GB"}
     };
 const hardwareRecommendation2 = {
-        'r1_671b': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2，2台"},
-      'r1_70b': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2"},
-'r1_32b': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2"},
-'r1_14b': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300I Duo"},
-'r1_7b': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300I Duo"},
-'r1_1.5b': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300V"}
+        'int42': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2，2台"},
+      'int41': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2"},
+'int4': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 800I A2"},
+'int8': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300I Duo"},
+'fp8': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300I Duo"},
+'fp16': { cloud:"云上GPU/裸金属",fuwuqi:"Atlas 300V"}
+    };
+const modeltype = {
+        'int42': { name:"DeepSeek-R1-671B",money:"100万以上"},
+      'int41': { name:"DeepSeek-R1-70B",money:"50~100万"},
+'int4': { name:"DeepSeek-R1-32B",money:"20~50万"},
+'int8': { name:"DeepSeek-R1-14B",money:"10~20万"},
+'fp8': {name:"DeepSeek-R1-7B",money:"10万以下"},
+'fp16': { name:"DeepSeek-R1-1.5B",money:"10万以下"}
     };
     // **模型架构细节 (来自用户提供的数据)**
     const modelArchParams = {
-        'r1_671b': { params: 671, layers: 61, hidden_dim: 7168, kv_heads: 128, head_dim: 128, kv_compress_dim: 512, moe: true },
-        'r1_1.5b': { params: 1.5, layers: 28, hidden_dim: 2020, kv_heads: 3, head_dim: 673, kv_compress_dim: null, moe: false },
-        'r1_7b':   { params: 7, layers: 34, hidden_dim: 4096, kv_heads: 32, head_dim: 128, kv_compress_dim: null, moe: false },
-        'r1_8b':   { params: 8, layers: 32, hidden_dim: 4096, kv_heads: 32, head_dim: 128, kv_compress_dim: null, moe: false },
-        'r1_14b':  { params: 14, layers: 69, hidden_dim: 4096, kv_heads: 32, head_dim: 128, kv_compress_dim: null, moe: false },
-        'r1_32b':  { params: 32, layers: 64, hidden_dim: 6400, kv_heads: 8, head_dim: 800, kv_compress_dim: null, moe: false },
-        'r1_70b':  { params: 70, layers: 80, hidden_dim: 8192, kv_heads: 64, head_dim: 128, kv_compress_dim: null, moe: false }
+        'int42': { params: 671, layers: 61, hidden_dim: 7168, kv_heads: 128, head_dim: 128, kv_compress_dim: 512, moe: true },
+        'fp16': { params: 1.5, layers: 28, hidden_dim: 2020, kv_heads: 3, head_dim: 673, kv_compress_dim: null, moe: false },
+        'fp8':   { params: 7, layers: 34, hidden_dim: 4096, kv_heads: 32, head_dim: 128, kv_compress_dim: null, moe: false },
+        'int8':  { params: 14, layers: 69, hidden_dim: 4096, kv_heads: 32, head_dim: 128, kv_compress_dim: null, moe: false },
+        'int4':  { params: 32, layers: 64, hidden_dim: 6400, kv_heads: 8, head_dim: 800, kv_compress_dim: null, moe: false },
+        'int41':  { params: 70, layers: 80, hidden_dim: 8192, kv_heads: 64, head_dim: 128, kv_compress_dim: null, moe: false }
     };
 
     const model_config = modelArchParams[modelType];
@@ -139,8 +149,8 @@ const hardwareRecommendation2 = {
 
     // 1. 模型权重内存 (直接从常量读取)
     model_weights_memory_gb = modelSizesGB[modelType].cpu;
-
-
+    modeltypename=modeltype[modelType].name;
+modelmoney=modeltype[modelType].money;
     // 2. KV Cache 内存 - 基于理论模型的计算
     let kvCacheSizeBytes = 0;
     if (model_config.moe) {
@@ -251,7 +261,7 @@ const hardwareRecommendation2 = {
         recommendation += " MindSpore 是华为昇腾平台的推荐框架，性能可能更优。";
         deployment_recommendation += " 对于华为昇腾 910B 平台，强烈推荐使用 MindSpore 框架以获得最佳性能。";
     } else {
-        deployment_recommendation += " 通用部署建议：根据模型大小和并发需求，选择合适的推理框架。";
+        deployment_recommendation += " 根据场景需求选择合适的模型大小，注意部署成本与客户预算。";
     }
 
 
@@ -261,6 +271,8 @@ const hardwareRecommendation2 = {
         kv_cache_memory: kv_cache_memory_gb,
         activation_memory: activation_memory_gb,
         other_memory: other_memory_gb,
+        modeltypename:modeltypename,
+ modelmoney:modelmoney,
         compute: computeLoad + " (估算值)",
         recommendation: recommendation,
         hardware_recommendation: hardwareRecommendation,
