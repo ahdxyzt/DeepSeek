@@ -2,7 +2,7 @@
 <!-- 安徽电信云中台 -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <title>安徽电信云中台DeepSeek部署方案推荐</title>
+    <title>安徽电信云中台DeepSeek方案推荐</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preload" href="./style.css" as="style">
     <link rel="stylesheet" href="./style.css">
@@ -21,35 +21,26 @@
 </head>
 <body class="bg-calculator">
     <div class="container">
-        <h1>安徽电信云中台</br>DeepSeek部署方案推荐</h1>
+        <h1>安徽电信云中台</br>DeepSeek方案推荐</h1>
         <div class="input-section">
             <label for="model-type">客户类型:</label>
             <select id="model-type">
-                <option value="r1_1.5b">学生、个人开发者</option>
+                <option value="r1_1.5b">个人开发者</option>
                 <option value="r1_7b">轻量级应用、小型团队</option>
                 
                 <option value="r1_14b">小型企业、内容创作者</option>
-                <option value="r1_32b">企业级服务/垂直领域</option>
+                <option value="r1_32b">企事业单位/垂直领域</option>
                 <option value="r1_70b">科研机构/超复杂任务</option>
                 <option value="r1_671b">算力平台/AI开发</option>
             </select>
         </div>
 
-        <div class="input-section">
-            <label for="precision">部署成本:</label>
-            <select id="precision">
-                <option value="fp16">10万以下</option>
-                <option value="fp8">10~20万</option>
-                <option value="bf16">20~50万</option>
-                <option value="int8">50~100万</option>
-                <option value="int4">100万以上</option>
-            </select>
-        </div>
+
 <div class="input-section">
             <label for="bushufangshi">部署方式:</label>
             <select id="bushufangshi">
                 <option value="a">公有云部署</option>
-                <option value="b">私有云部署</option>
+                <option value="b">私有化部署</option>
                 <option value="c">本地私有化部署</option>
 
             </select>
@@ -62,7 +53,7 @@
                 <option value="fp8">适合中等复杂度任务，如文案撰写、表格处理、统计分析、代码生成、逻辑推理等等</option>
               
                 <option value="int8">可处理上下文的高级智能客服、多轮复杂对话、长文总结、简单数据分析、写作助手等</option>
-                <option value="int4">适合超大规模任务，如语言建模、金融预测、智能客服、企业知识库等</option>
+                <option value="int4">适合大规模任务，如语言建模、金融预测、智能客服、企业知识库等</option>
 <option value="int41">药物研发、金融预测、AIGC生成、高复杂度生成任务（创意写作、算法设计）</option>
 <option value="int42">国家级/超大规模 AI 研究（如气候建模、基因组分析）</option>
             </select>
@@ -76,7 +67,7 @@
 
         
 
-        <button id="calculate-button">部署方案推荐</button>
+        <button id="calculate-button">方案推荐</button>
 
         <div id="results" class="results-section">
             <!-- 计算结果将显示在这里 -->
