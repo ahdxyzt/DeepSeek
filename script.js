@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化选择器和事件监听器
     const fineTuningMethodSelect = document.getElementById('fine-tuning-method');
     const loraParamsSection = document.getElementById('lora-params-section');
-    const precisionSelect =0;
+    const precisionSelect = document.getElementById('precision');
     const hardwareSelect = document.getElementById('hardware');
     const allHardwareOptions = 0;
    
@@ -24,7 +24,7 @@ document.getElementById('calculate-button').addEventListener('click', function()
 const contextLength=0;
 const bushufangshi=document.getElementById('bushufangshi').value;
     const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '<h2>算力部署建议（最低配置）:</h2>';
+    resultsDiv.innerHTML = '<h2>方案建议（最低配置）:</h2>';
     // 调用计算函数并显示结果
     const calculationResults = calculateRequirements(modelType, precision, concurrency,bushufangshi, contextLength, framework, fineTuningMethod, loraTrainableParams, hardware);
 
@@ -45,7 +45,7 @@ hardwareRecommendationHTML += `<div class="result-item"></div>`;
         resultsDiv.innerHTML += `
             <div class="result-item"><strong>推荐模型规模:</strong>${calculationResults.modeltypename}</div>
 <hr>
-         <div class="result-item"><strong>预估成本:</strong>${calculationResults.modelmoney}</div>
+         <div class="result-item"><strong>预估成本（仅供参考，详询支撑人员）:</strong>${calculationResults.modelmoney}</div>
             
             ${fineTuningMethod === 'lora' ? `<div class="result-item"><strong>LoRA 可训练参数:</strong> ${loraTrainableParams} Billion</div>` : ''}
             <hr>
