@@ -44,8 +44,8 @@ hardwareRecommendationHTML += `<div class="result-item">以上用于体验版配
 
         resultsDiv.innerHTML += `
             <div class="result-item"><strong>推荐模型规模:</strong>${calculationResults.modeltypename}</div>
-<hr>
-         <div class="result-item"><strong>预估成本（仅供参考，详询专业人员）:</strong>${calculationResults.modelmoney}</div>
+
+        
             
             ${fineTuningMethod === 'lora' ? `<div class="result-item"><strong>LoRA 可训练参数:</strong> ${loraTrainableParams} Billion</div>` : ''}
             <hr>
